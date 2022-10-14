@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <title>TENNIS_SVG</title>
+
+</head>
+
+<body>
+
+    <script>
+
+        'use strict';
+
+        const urlNS = "http://www.w3.org/2000/svg";
+
+        const NUMBER_SIZE = 50; //размер шрифта счетчика очков
+        const BUTTON_WIDTH = 100; 
+        const WIDTH_FIELD = 800; //ширина поля
+        const HEIGHT_FIELD = 400; //высота поля
+        const RADIUS_BALL = 20; //радиус мяча
+        const WIDTH_RACKET = 7;
+        const HEIGHT_RACKET = 100;
+        const HEIGHT_KONTEINER = HEIGHT_FIELD + NUMBER_SIZE;
+
+        let counterL = 0;
+        let counterR = 0;
+
+        const centerX = WIDTH_FIELD / 2;
+        const centerY = HEIGHT_FIELD / 2+RADIUS_BALL*2;
+
+        const konteiner = document.createElementNS(urlNS, 'svg'); //контейнер, в котором игра
+        konteiner.setAttribute('width', WIDTH_FIELD);
+        konteiner.setAttribute('height', HEIGHT_KONTEINER);
+
+        const button=document.createElementNS(urlNS,'rect'); //кнопка
+        button.setAttribute('x', 0);
+        button.setAttribute('y', 0);
+        button.setAttribute('width', BUTTON_WIDTH);
+        button.setAttribute('height', NUMBER_SIZE/1.5);
+        button.setAttribute('fill', 'gray');
+        konteiner.appendChild(button);
+        button.addEventListener('click', start, false);
+
+        const butTxt = document.createElementNS(urlNS, 'text'); //текст кнопки
+        butTxt.innerHTML='Старт!';
+        butTxt.setAttribute('x', BUTTON_WIDTH/2);
+        butTxt.setAttribute('y', NUMBER_SIZE/2);
+        butTxt.style.fontSize = NUMBER_SIZE/2;
+        butTxt.setAttribute("text-anchor", "middle");
+        butTxt.setAttribute('cursor', 'default');
+        konteiner.appendChild(butTxt);
+        butTxt.addEventListener('click', start, false);
+     
+
+        const NumbCounter = document.createElementNS(urlNS, 'text'); //очки
+        NumbCounter.innerHTML=counterL + ':' + counterR;
+        NumbCounter.setAttribute('x',centerX);
+        NumbCounter.setAttribute('y',NUMBER_SIZE);
+        NumbCounter.style.fontSize = NUMBER_SIZE;
+        NumbCounter.setAttribute("text-anchor", "middle");
+        konteiner.appendChild(NumbCounter);
+
+        const field = document.createElementNS(urlNS, 'rect'); //поле игры
+        field.setAttribute('x', 0);
+        field.setAttribute('y', NUMBER_SIZE);
+        field.setAttribute('width', WIDTH_FIELD);
+        field.setAttribute('height', HEIGHT_FIELD);
+        field.setAttribute('fill', 'yellow');
+        konteiner.appendChild(field);
+
+        
+
+        const ball = document.createElementNS(urlNS, 'circle'); //мяч
+        ball.setAttribute('cx', centerX);
+        ball.setAttribute('cy', centerY);
+        ball.setAttribute('r', RADIUS_BALL);
+        ball.setAttribute('fill', 'red');
+        konteiner.appendChild(ball);
+
+        const racketL = document.createElementNS(urlNS, 'rect'); //левая ракетка
+        racketL.setAttribute('x', 0);
+        racketL.setAttribute('y', (HEIGHT_FIELD / 2));
+        racketL.setAttribute('width', WIDTH_RACKET );
+        racketL.setAttribute('height', HEIGHT_RACKET);
+        racketL.setAttribute('fill', 'green');
+        konteiner.appendChild(racketL);
+
+        const racketR = document.createElementNS(urlNS, 'rect'); // правая ракетка
+        racketR.setAttribute('x', WIDTH_FIELD - WIDTH_RACKET);
+        racketR.setAttribute('y', (HEIGHT_FIELD / 2));
+        racketR.setAttribute('width', WIDTH_RACKET );
+        racketR.setAttribute('height', HEIGHT_RACKET);
+        racketR.setAttribute('fill', 'blue');
+        konteiner.appendChild(racketR);
+
+        document.body.append(konteiner);
+
+        requestAnimationFrame(tick);
+
+        function start() {
+            ballH.posX=centerX;
+            ballH.posY=centerY;
+            do {
+                    var speedXNotNull = randomDiap(-4, 4) * 2;
+                    var speedYNotNull = randomDiap(-2, 2) * 2;
+                } while (speedXNotNull == 0 || speedYNotNull == 0);
+                ballH.speedX = speedXNotNull;
+                ballH.speedY = speedYNotNull;
+
+                function randomDiap(n, m) {
+                    return Math.floor(Math.random() * (m - n + 1)) + n;
+                }
+
+        }
+
+        let ballH = {
+            posX: centerX,
+            posY: centerY,
+            speedX: 0,
+            speedY: 0,
+            
+            update: function () {
+
+                ball.setAttribute('cx', this.posX);
+                ball.setAttribute('cy', this.posY);
+               
+            }
+        }
+
+        let rackets = {
+            racket1PosX: 0,
+            racket1PosY: (HEIGHT_FIELD / 2),
+            racket1Speed: 0,
+            racket2PosX: (WIDTH_FIELD - WIDTH_RACKET),
+            racket2PosY: (HEIGHT_FIELD / 2),
+            racket2Speed: 0,
+            width: WIDTH_RACKET,
+            height: HEIGHT_RACKET,
+
+            update: function update() {
+                racketL.setAttribute('y', this.racket1PosY);
+                racketR.setAttribute('y', this.racket2PosY);
+                
+            }
+        };
+
+        window.addEventListener('keydown', function (EO) {
+            EO = EO || window.event;
+
+            if (EO.keyCode === 17) {
+                rackets.racket1Speed = 12;
+            }
+            if (EO.keyCode === 16) {
+                rackets.racket1Speed = -12;
+            }
+            if (EO.keyCode === 40) {
+                rackets.racket2Speed = 12;
+            }
+            if (EO.keyCode === 38) {
+                rackets.racket2Speed = -12;
+            }
+        });
+
+        window.addEventListener('keyup', function (EO) {
+            EO = EO || window.event;
+
+            if (EO.keyCode === 17) {
+                rackets.racket1Speed = 0;
+            }
+            if (EO.keyCode === 16) {
+                rackets.racket1Speed = 0;
+            }
+            if (EO.keyCode === 40) {
+                rackets.racket2Speed = 0;
+            }
+            if (EO.keyCode === 38) {
+                rackets.racket2Speed = 0;
+            }
+
+        });
+
+        function tick() {
+
+            rackets.update();
+            ballH.update();
+
+            ballH.posX += ballH.speedX;
+            ballH.posY += ballH.speedY;
+
+
+            rackets.racket1PosY += rackets.racket1Speed;
+            rackets.racket2PosY += rackets.racket2Speed;
+
+            // ракетка выше стены?
+            if (rackets.racket1PosY<=NUMBER_SIZE) {
+                rackets.racket1PosY = NUMBER_SIZE;
+            }
+            if (rackets.racket2PosY <= NUMBER_SIZE) {
+                rackets.racket2PosY = NUMBER_SIZE;
+            }
+
+            //ракетка ниже стены?
+            if (rackets.racket1PosY+HEIGHT_RACKET/2>HEIGHT_FIELD) {
+                rackets.racket1PosY=HEIGHT_FIELD-HEIGHT_RACKET/2;
+            }
+            if (rackets.racket2PosY+HEIGHT_RACKET/2>HEIGHT_FIELD) {
+                rackets.racket2PosY = HEIGHT_FIELD-HEIGHT_RACKET/2;
+            }
+
+            // ударился ли мяч о левую ракетку?
+            if (ballH.posX-RADIUS_BALL<=WIDTH_RACKET) {
+                if (ballH.posY-RADIUS_BALL>= rackets.racket1PosY && ballH.posY+RADIUS_BALL<=rackets.racket1PosY+HEIGHT_RACKET) {
+                    ballH.speedX = -ballH.speedX;
+                }
+            }
+
+            // мяч левее стены?
+            if (ballH.posX<RADIUS_BALL) {
+                ballH.speedX=0;
+                ballH.speedY=0;
+                ballH.posX=RADIUS_BALL;
+                counterR++;
+                NumbCounter.innerHTML=counterL + ':' + counterR;
+            }
+
+
+            // ударился ли мяч о правую ракетку?
+            if (ballH.posX+RADIUS_BALL>=(WIDTH_FIELD-WIDTH_RACKET)) {
+                if (ballH.posY-RADIUS_BALL>= rackets.racket2PosY && ballH.posY +RADIUS_BALL<= rackets.racket2PosY + HEIGHT_RACKET) {
+                    ballH.speedX = -ballH.speedX;
+                }
+            }
+
+            // мяч правее стены?
+            if (ballH.posX>WIDTH_FIELD-RADIUS_BALL) {
+                ballH.speedX=0;
+                ballH.speedY=0;
+                ballH.posX=WIDTH_FIELD-RADIUS_BALL;
+                counterL++;
+                NumbCounter.innerHTML=counterL + ':' + counterR;
+                
+            }
+  
+             
+            // мяч ниже пола?
+            if (ballH.posY+RADIUS_BALL>HEIGHT_FIELD+NUMBER_SIZE) {
+                ballH.speedY=-ballH.speedY;
+            }
+
+            // мяч выше потолка?
+            if (ballH.posY<NUMBER_SIZE+RADIUS_BALL) {
+                ballH.speedY = -ballH.speedY;
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+    </script>
+</body>
+
+</html>
