@@ -183,15 +183,14 @@
 
         function tick() {
 
-            rackets.update();
-            ballH.update();
-
             ballH.posX += ballH.speedX;
             ballH.posY += ballH.speedY;
 
-
             rackets.racket1PosY += rackets.racket1Speed;
             rackets.racket2PosY += rackets.racket2Speed;
+
+            rackets.update();
+            ballH.update();
 
             // ракетка выше стены?
             if (rackets.racket1PosY<=NUMBER_SIZE) {
@@ -214,36 +213,30 @@
                 if (ballH.posY-RADIUS_BALL>= rackets.racket1PosY && ballH.posY+RADIUS_BALL<=rackets.racket1PosY+HEIGHT_RACKET) {
                     ballH.speedX = -ballH.speedX;
                 }
-            }
-
-            // мяч левее стены?
-            if (ballH.posX<RADIUS_BALL) {
+                else if (ballH.posX<RADIUS_BALL) {
                 ballH.speedX=0;
                 ballH.speedY=0;
                 ballH.posX=RADIUS_BALL;
                 counterR++;
                 NumbCounter.innerHTML=counterL + ':' + counterR;
             }
-
-
+            }
+                       
             // ударился ли мяч о правую ракетку?
             if (ballH.posX+RADIUS_BALL>=(WIDTH_FIELD-WIDTH_RACKET)) {
                 if (ballH.posY-RADIUS_BALL>= rackets.racket2PosY && ballH.posY +RADIUS_BALL<= rackets.racket2PosY + HEIGHT_RACKET) {
                     ballH.speedX = -ballH.speedX;
                 }
-            }
-
-            // мяч правее стены?
-            if (ballH.posX>WIDTH_FIELD-RADIUS_BALL) {
+                else  if (ballH.posX>WIDTH_FIELD-RADIUS_BALL) {
                 ballH.speedX=0;
                 ballH.speedY=0;
                 ballH.posX=WIDTH_FIELD-RADIUS_BALL;
                 counterL++;
                 NumbCounter.innerHTML=counterL + ':' + counterR;
-                
+    
             }
-  
-             
+            }
+       
             // мяч ниже пола?
             if (ballH.posY+RADIUS_BALL>HEIGHT_FIELD+NUMBER_SIZE) {
                 ballH.speedY=-ballH.speedY;
